@@ -1,0 +1,10 @@
+/* assets/css/style.css */
+body {
+    background-color: #f4f6f9;
+}
+.custom-header {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
