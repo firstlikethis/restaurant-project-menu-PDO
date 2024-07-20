@@ -1,27 +1,40 @@
 <?php
 session_start();
-include '../includes/config.php';
+require_once '../includes/config.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $password = md5($_POST['password']);
+if (isset($_COOKIE['remember_me'])) {
+    parse_str($_COOKIE['remember_me'], $user_details);
+    $_SESSION['user_id'] = $user_details['id'];
+    $_SESSION['username'] = $user_details['username'];
+    $_SESSION['role'] = $user_details['role'];
+    header('Location: index.php');
+    exit;
+}
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
-    $stmt->execute([$username, $password]);
+$message = '';
+$type = 'error';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
+
+    $stmt = $pdo->prepare("SELECT id, username, password, role FROM users WHERE username = ?");
+    $stmt->execute([$username]);
     $user = $stmt->fetch();
 
-    if ($user) {
+    if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['role'] = $user['role'];
-        header("Location: index.php"); 
-        exit();
+
+        $message = 'Login successful!';
+        $type = 'success';
     } else {
-        $error = "Invalid credentials";
+        $message = 'Invalid username or password';
+        $type = 'error';
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -31,17 +44,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Admin Login</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/css/adminlte.min.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease-in-out;
+        }
+        .login-box {
+            transition: transform 0.3s ease;
+        }
+    </style>
 </head>
 <body class="hold-transition login-page">
     <div class="login-box">
         <div class="login-logo">
-            <a href="#"><b>Admin</b>LOGIN</a>
+            <a href="#"><b>Admin</b>Panel</a>
         </div>
-        <!-- /.login-logo -->
         <div class="card">
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Sign in to start your session</p>
-
                 <form action="login.php" method="post">
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" placeholder="Username" name="username" required>
@@ -59,33 +82,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-8">
-                            <!-- Additional options like 'Remember me' can go here -->
+                    <div class="form-group mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" name="remember_me" id="remember_me" class="custom-control-input">
+                            <label class="custom-control-label" for="remember_me">Remember Me</label>
                         </div>
-                        <!-- /.col -->
+                    </div>
+                    <div class="row">
+                        <div class="col-8"></div>
                         <div class="col-4">
                             <button type="submit" class="btn btn-primary btn-block">Sign In</button>
                         </div>
-                        <!-- /.col -->
                     </div>
                 </form>
-
-                <!-- Error message display -->
-                <?php if (!empty($error)): ?>
-                    <div class="alert alert-danger" role="alert">
-                        <?= $error; ?>
-                    </div>
-                <?php endif; ?>
-
             </div>
-            <!-- /.login-card-body -->
         </div>
     </div>
-    <!-- /.login-box -->
 
     <script src="../assets/js/jquery.min.js"></script>
-    <script src="../assets/js/bootstrap.min.js"></script>
-    <script src="../assets/js/adminlte.min.js"></script>
+    <script src="../assets/js/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function() {
+            if ('<?php echo $message; ?>' !== '') {
+                setTimeout(function() {
+                    Swal.fire({
+                        icon: '<?php echo $type; ?>',
+                        title: '<?php echo $message; ?>',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then((result) => {
+                        if ('<?php echo $type; ?>' === 'success') {
+                            window.location.href = 'index.php';
+                        }
+                    });
+                }, 200);
+            }
+        });
+    </script>
 </body>
 </html>
