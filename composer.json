@@ -1,0 +1,15 @@
+{
+    "name": "chakkria/restaurant",
+    "description": "A restaurant management system",
+    "type": "project",
+    "require": {
+        "vlucas/phpdotenv": "^5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Chakkria\\Restaurant\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
