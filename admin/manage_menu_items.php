@@ -90,6 +90,41 @@ include 'admin_header.php';
 <section class="content" style="padding-top: 20px;">
     <div class="container-fluid">
         <div class="row">
+            <div class="col-lg-4 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3><?php echo $totalItems; ?></h3>
+                        <p>Total Menu Items</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3><?php echo $activeItems; ?></h3>
+                        <p>Active Menu Items</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3><?php echo $inactiveItems; ?></h3>
+                        <p>Inactive Menu Items</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
@@ -105,43 +140,9 @@ include 'admin_header.php';
                     </div>
                     <div class="card-body">
                         <!-- Summary Box -->
-                        <div class="row mb-3">
-                            <div class="col-lg-4 col-6">
-                                <div class="small-box bg-info">
-                                    <div class="inner">
-                                        <h3><?php echo $totalItems; ?></h3>
-                                        <p>Total Menu Items</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fas fa-list"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-6">
-                                <div class="small-box bg-success">
-                                    <div class="inner">
-                                        <h3><?php echo $activeItems; ?></h3>
-                                        <p>Active Menu Items</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fas fa-check"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-6">
-                                <div class="small-box bg-danger">
-                                    <div class="inner">
-                                        <h3><?php echo $inactiveItems; ?></h3>
-                                        <p>Inactive Menu Items</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fas fa-times"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
                         <!-- Table for displaying menu items -->
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-bordered table-hover text-center" style="width:100%" id="menuItems">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -288,6 +289,13 @@ include 'admin_header.php';
 
 <script>
 $(document).ready(function() {
+    // Initialize DataTables
+    $('#menuItems').DataTable({
+        "dom": 't', // This will hide the search and entries elements
+        "paging": false, // This will hide pagination
+        "scrollX": true // Enable horizontal scrolling
+    });
+
     // Show success or error alerts
     var alertType = "<?php echo $alertType; ?>";
     var alertMessage = "<?php echo $alertMessage; ?>";

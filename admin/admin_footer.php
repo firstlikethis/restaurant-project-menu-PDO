@@ -15,6 +15,7 @@
 <script src="../assets/js/adminlte.min.js"></script>
 <!-- SweetAlert2 -->
 <script src="../assets/js/sweetalert2@11"></script>
+<script src="../assets/js/jquery.dataTables.min.js"></script>
 
 <script>
 $(document).ready(function() {
